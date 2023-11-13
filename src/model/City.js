@@ -3,6 +3,7 @@ import { EdgesLine } from "@/effect/EdgesLine"
 import { BaseModel } from "./BaseModel"
 import * as THREE from 'three'
 import { modifyCityDefaultMaterial } from "../shader/modifyCityDefaultMaterial"
+import { CityWater } from '@/effect/CityWater.js'
 export class City extends BaseModel {
   // 子类无 constructor，默认走父类的，而且 this 为子类的实例对象
   init () {
@@ -41,6 +42,15 @@ export class City extends BaseModel {
           // 对物体追加混合的着色器代码（渐变色白膜效果）
           modifyCityDefaultMaterial(model, true)
         }
+      }
+      // 针对水物体单独处理
+      if (model.name === 'Shanghai-08-River') {
+        // 把原本水物体隐藏
+        model.visible = false
+        // 创建更加真实的水面效果物体
+        new CityWater(model, this.scene)
+        // 把水波纹物体传入到动效管理类当中
+        // EffectManager.getInstance().addObj(theWater)
       }
     })
   }
