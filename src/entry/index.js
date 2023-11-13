@@ -4,7 +4,7 @@ import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { loadManager } from '@/model/loadManager.js'
 import { City } from '@/model/City.js'
 import { Ship } from '@/model/Ship'
-
+import { Sky } from '@/environment/Sky.js'
 let scene, camera, renderer, control, css2Renderer
 
 // 初始化 3d 基本环境
@@ -64,7 +64,15 @@ window.addEventListener('resize', function () {
 // 启动
 window.addEventListener('DOMContentLoaded', function () {
   init()
-  createLight()
+  createLight();
+  (new Sky(scene)).setBack('textures/sky/', [
+    'px.jpg',
+    'nx.jpg',
+    'py.jpg',
+    'ny.jpg',
+    'pz.jpg',
+    'nz.jpg'
+  ])
   loadManager(['fbx/city.fbx', 'gltf/ship.glb'], (modelList) => {
     modelList.forEach(m => {
       if (m.url === 'fbx/city.fbx') {
