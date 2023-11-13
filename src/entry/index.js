@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { loadManager } from '@/model/loadManager.js'
+import { City } from '@/model/City.js'
 let scene, camera, renderer, control, css2Renderer
 
 // 初始化 3d 基本环境
@@ -62,8 +63,15 @@ window.addEventListener('resize', function () {
 window.addEventListener('DOMContentLoaded', function () {
   init()
   createLight()
-  loadManager(['fbx/city.fbx', 'gltf/ship.glb'], (c) => {
-    console.log(c)
+  loadManager(['fbx/city.fbx', 'gltf/ship.glb'], (modelList) => {
+    modelList.forEach(m => {
+      if (m.url === 'fbx/city.fbx') {
+        new City(m.model, scene, camera, control)
+      } else if (m.url === 'gltf/ship.glb') {
+
+      }
+    })
+
   })
   renderLoop()
 })
