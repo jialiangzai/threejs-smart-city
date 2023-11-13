@@ -2,7 +2,7 @@
 import { EdgesLine } from "@/effect/EdgesLine"
 import { BaseModel } from "./BaseModel"
 import * as THREE from 'three'
-
+import { modifyCityDefaultMaterial } from "../shader/modifyCityDefaultMaterial"
 export class City extends BaseModel {
   // 子类无 constructor，默认走父类的，而且 this 为子类的实例对象
   init () {
@@ -32,10 +32,14 @@ export class City extends BaseModel {
           // 周围建筑
           model.material = periphery
           new EdgesLine(this.scene, model, new THREE.Color('#666666'))
+          // 对物体追加混合的着色器代码（渐变色白膜效果）
+          modifyCityDefaultMaterial(model, false)
         } else {
           // 中心建筑
           model.material = centerMaterial
           new EdgesLine(this.scene, model, new THREE.Color('#00ffff'))
+          // 对物体追加混合的着色器代码（渐变色白膜效果）
+          modifyCityDefaultMaterial(model, true)
         }
       }
     })
