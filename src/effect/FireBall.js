@@ -4,7 +4,8 @@ export class FireBall {
   constructor(scene, center) {
     this.scene = scene
     this.center = center
-
+    this.nowScale = 0
+    this.nowMesh = {}
     this.init()
   }
   init () {
@@ -24,7 +25,16 @@ export class FireBall {
     })
     const sphere = new THREE.Mesh(geometry, material)
     sphere.position.set(this.center.x, 0, this.center.z)
+    this.nowMesh = sphere
     this.scene.add(sphere)
   }
-
+  onTick (t) {
+    // t的值：渲染循环启动过了多少毫秒时间
+    if (this.nowScale < 1) {
+      this.nowScale += 0.001 // 增加放大的比例
+      this.nowMesh.scale.set(this.nowScale, this.nowScale, this.nowScale)
+    } else {
+      this.nowScale = 0
+    }
+  }
 }
