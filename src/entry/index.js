@@ -5,7 +5,8 @@ import { loadManager } from '@/model/loadManager.js'
 import { City } from '@/model/City.js'
 import { Ship } from '@/model/Ship'
 import { Sky } from '@/environment/Sky.js'
-import { EffectManager } from '../effect/EffectManager'
+import { EffectManager } from '@/effect/EffectManager'
+import { ClickHandler } from '@/utils/ClickHandler'
 
 let scene, camera, renderer, control, css2Renderer
 
@@ -91,6 +92,8 @@ window.addEventListener('DOMContentLoaded', function () {
     })
 
   })
+  // 光线投射注册
+  ClickHandler.getInstance().init(camera)
   renderLoop()
 })
 

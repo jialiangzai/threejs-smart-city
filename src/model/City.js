@@ -2,19 +2,29 @@
 import { EdgesLine } from "@/effect/EdgesLine"
 import { BaseModel } from "./BaseModel"
 import * as THREE from 'three'
-import { modifyCityDefaultMaterial } from "../shader/modifyCityDefaultMaterial"
+import { modifyCityDefaultMaterial } from "@/shader/modifyCityDefaultMaterial"
 import { CityWater } from '@/effect/CityWater.js'
 import { Fire } from '@/effect/Fire.js'
 import { getBoxCenter } from '@/utils/getBoxCenter.js'
-import { FireBall } from "../effect/FireBall"
-import { BuildInfo } from "../dom/BuildInfo"
+import { FireBall } from "@/effect/FireBall"
+import { BuildInfo } from "@/dom/BuildInfo"
 import { EffectManager } from '@/effect/EffectManager.js'
+import { ClickHandler } from "@/utils/ClickHandler"
+
 export class City extends BaseModel {
+
   // 子类无 constructor，默认走父类的，而且 this 为子类的实例对象
   init () {
+    this.buildNameObj = { // 模型名字和建筑显示名字对应关系
+      '01-shanghaizhongxindasha': '上海中心大厦',
+      "02-huanqiujinrongzhongxin": "环球金融中心",
+      "03-jinmaodasha": "金茂大厦",
+      "04-dongfangmingzhu": "东方明珠",
+    }
     this.scene.add(this.model)
     this.initEffect()
     this.initFire('01-shanghaizhongxindasha')
+    this.bindClick()
   }
   initEffect () {
     // 中心城市建筑材质
@@ -66,20 +76,13 @@ export class City extends BaseModel {
     let { center, size } = getBoxCenter(build)
     new Fire(this.scene, center, size)
     new FireBall(this.scene, center)
-    this.initDesc(this.scene, center)
+    this.initDesc(this.scene, center, byName)
   }
   // 只有单独设置有名字的物体，才能被获取到并绑定事件
-  initDesc (scene, center) {
-    let buildNameObj = { // 模型名字和建筑显示名字对应关系
-      '01-shanghaizhongxindasha': '上海中心大厦',
-      "02-huanqiujinrongzhongxin": "环球金融中心",
-      "03-jinmaodasha": "金茂大厦",
-      "04-dongfangmingzhu": "东方明珠",
-    }
+  initDesc (scene, center, byName) {
     new BuildInfo(scene, center, {
       "squareMeters": "200",
-      // "name": buildNameObj[buildName],
-      "name": '上海中心大厦',
+      "name": this.buildNameObj[byName],
       "officesRemain": "200",
       "accommodate": "500",
       "parkingRemain": "88",
@@ -88,6 +91,23 @@ export class City extends BaseModel {
         "y": "77.6723594934777",
         "z": "190.86129619259177"
       }
+    })
+  }
+  // 中心 4 个建筑绑定点击事件
+  bindClick () {
+    Object.keys(this.buildNameObj).forEach(key => {
+      const build = this.model.getObjectByName(key)
+      ClickHandler.getInstance().addMesh(build, (object) => {
+        // object: 3d 物体
+        const { center } = getBoxCenter(object)
+        new BuildInfo(this.scene, center, {
+          name: `${this.buildNameObj[object.name]}`,
+          squareMeters: '666',
+          accommodate: '666',
+          officesRemain: '666',
+          parkingRemain: '666',
+        })
+      })
     })
   }
 }
