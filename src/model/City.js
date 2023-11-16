@@ -6,6 +6,9 @@ import { modifyCityDefaultMaterial } from "../shader/modifyCityDefaultMaterial"
 import { CityWater } from '@/effect/CityWater.js'
 import { Fire } from '@/effect/Fire.js'
 import { getBoxCenter } from '@/utils/getBoxCenter.js'
+import { FireBall } from "../effect/FireBall"
+import { BuildInfo } from "../dom/BuildInfo"
+
 export class City extends BaseModel {
   // 子类无 constructor，默认走父类的，而且 this 为子类的实例对象
   init () {
@@ -62,5 +65,29 @@ export class City extends BaseModel {
     let build = this.model.getObjectByName(byName)
     let { center, size } = getBoxCenter(build)
     new Fire(this.scene, center, size)
+    new FireBall(this.scene, center)
+    this.initDesc(this.scene, center)
+  }
+  // 只有单独设置有名字的物体，才能被获取到并绑定事件
+  initDesc (scene, center) {
+    let buildNameObj = { // 模型名字和建筑显示名字对应关系
+      '01-shanghaizhongxindasha': '上海中心大厦',
+      "02-huanqiujinrongzhongxin": "环球金融中心",
+      "03-jinmaodasha": "金茂大厦",
+      "04-dongfangmingzhu": "东方明珠",
+    }
+    new BuildInfo(scene, center, {
+      "squareMeters": "200",
+      // "name": buildNameObj[buildName],
+      "name": '上海中心大厦',
+      "officesRemain": "200",
+      "accommodate": "500",
+      "parkingRemain": "88",
+      "cameraPosition": {
+        "x": "-27.60404773326758",
+        "y": "77.6723594934777",
+        "z": "190.86129619259177"
+      }
+    })
   }
 }
