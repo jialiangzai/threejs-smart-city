@@ -8,7 +8,7 @@ import { Fire } from '@/effect/Fire.js'
 import { getBoxCenter } from '@/utils/getBoxCenter.js'
 import { FireBall } from "../effect/FireBall"
 import { BuildInfo } from "../dom/BuildInfo"
-
+import { EffectManager } from '@/effect/EffectManager.js'
 export class City extends BaseModel {
   // 子类无 constructor，默认走父类的，而且 this 为子类的实例对象
   init () {
@@ -54,9 +54,9 @@ export class City extends BaseModel {
         // 把原本水物体隐藏
         model.visible = false
         // 创建更加真实的水面效果物体
-        new CityWater(model, this.scene)
+        let theWater = new CityWater(model, this.scene)
         // 把水波纹物体传入到动效管理类当中
-        // EffectManager.getInstance().addObj(theWater)
+        EffectManager.getInstance().addObj(theWater)
       }
     })
   }
