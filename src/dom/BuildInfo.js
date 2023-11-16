@@ -12,6 +12,7 @@ export class BuildInfo {
   }
   createNameDiv () {
     const nameDiv = document.querySelector('#tag-1')
+    nameDiv.style.pointerEvents = 'all'
     nameDiv.innerHTML = this.dataObj.name // 建筑名字
     // 标签虽然有 display：none; 
     //  但是转化成 2D 物体后会在 2D 渲染器中直接显示
@@ -36,6 +37,13 @@ export class BuildInfo {
     infoObject.position.set(this.center.x, this.center.y + 5, this.center.z)
     this.scene.add(infoObject)
     this.list.push(infoObject)
-
+    infoDiv.addEventListener('click', (e) => {
+      e.stopPropagation()
+      this.clear(this)
+    })
+  }
+  // 隐藏信息物体
+  clear () {
+    this.list.forEach(obj => obj.visible = false)
   }
 }
