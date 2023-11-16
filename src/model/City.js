@@ -4,11 +4,14 @@ import { BaseModel } from "./BaseModel"
 import * as THREE from 'three'
 import { modifyCityDefaultMaterial } from "../shader/modifyCityDefaultMaterial"
 import { CityWater } from '@/effect/CityWater.js'
+import { Fire } from '@/effect/Fire.js'
+import { getBoxCenter } from '@/utils/getBoxCenter.js'
 export class City extends BaseModel {
   // 子类无 constructor，默认走父类的，而且 this 为子类的实例对象
   init () {
     this.scene.add(this.model)
     this.initEffect()
+    this.initFire('01-shanghaizhongxindasha')
   }
   initEffect () {
     // 中心城市建筑材质
@@ -53,5 +56,11 @@ export class City extends BaseModel {
         // EffectManager.getInstance().addObj(theWater)
       }
     })
+  }
+  // 火灾
+  initFire (byName) {
+    let build = this.model.getObjectByName(byName)
+    let { center, size } = getBoxCenter(build)
+    new Fire(this.scene, center, size)
   }
 }
