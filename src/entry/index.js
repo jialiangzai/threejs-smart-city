@@ -9,6 +9,7 @@ import { EffectManager } from '@/effect/EffectManager'
 import { ClickHandler } from '@/utils/ClickHandler'
 import { Fly } from '@/model/Fly.js'
 import { EventBus } from '@/utils/EventBus.js'
+import { DataManager } from '@/mock/DataManager.js'
 let scene, camera, renderer, control, css2Renderer
 
 // 初始化 3d 基本环境
@@ -80,9 +81,12 @@ window.addEventListener('DOMContentLoaded', function () {
     'nz.jpg'
   ])
   loadManager(['fbx/city.fbx', 'gltf/ship.glb'], (modelList) => {
-    modelList.forEach(m => {
+    modelList.forEach(async (m) => {
       if (m.url === 'fbx/city.fbx') {
-        new City(m.model, scene, camera, control)
+        let cityM = new City(m.model, scene, camera, control)
+        // 接口问题
+        // let res = await DataManager.getInstance().getData()
+        // cityM.buildNameObj = res
       } else if (m.url === 'gltf/ship.glb') {
         const ship = new Ship(m.model, scene, camera, control)
         ship.model.position.set(150, 0, -80)

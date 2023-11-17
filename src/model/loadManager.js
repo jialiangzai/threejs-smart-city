@@ -22,7 +22,7 @@ export function loadManager (pathList, successFn) {
     // totalNum: 总共要加载的个数
     // * 100 目的：为了让 0.5 进度变成 50 后续添加 % 后缀
     // 当前已经加载的进度数字
-    let progressRatio = Math.floor(loadedNum / totalNum * 100)
+    let progressRatio = Math.floor(loadedNum / totalNum) * 100
     gsap.fromTo('#processing-number', {
       innerText: preValue // 暂时先传入一个数字（后面再去加 % 字符串）
     }, {
