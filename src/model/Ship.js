@@ -1,7 +1,7 @@
 // 游船类
 import * as THREE from 'three'
 import { BaseModel } from './BaseModel'
-
+import { EventBus } from '@/utils/EventBus.js'
 export class Ship extends BaseModel {
   init () {
     this.pointIndex = 0 // 保存当前游船所在位置坐标的索引
@@ -10,7 +10,7 @@ export class Ship extends BaseModel {
 
     this.isMoveCamera = false // 开关属性（控制摄像机是否跟随游船移动）
 
-    // this.onModelAttach() // 鼠标事件
+    this.onModelAttach() // 鼠标事件
     this.scene.add(this.model)
   }
   // 游船行进方法-切换坐标点位置
@@ -18,7 +18,11 @@ export class Ship extends BaseModel {
     if (this.pointIndex < this.pointArr.length - 1) {
       const { x, y, z } = this.pointArr[this.pointIndex + 1]
       if (this.isMoveCamera) {
-        this.camera.lookAt(x, y + 20, z)
+        if (!this.isMouseTouching) {
+          // 鼠标没有被按下时，才设置摄像机的 lookAt
+          // 如果处于漫游模式+鼠标被按下，证明自己要旋转摄像机，那就不能让摄像的 lookAt 执行影响旋转效果
+          this.camera.lookAt(x, y + 20, z)
+        }
         this.camera.position.set(x, y + 20, z)
       }
       // 游船移动：
@@ -58,5 +62,38 @@ export class Ship extends BaseModel {
     const line = new THREE.Line(geometry, material)
     // this.scene.add(line)
   }
-  onModelAttach () { }
+  onModelAttach () {
+    // 点击漫游模式 - 绑定/移除鼠标相关事件
+    EventBus.getInstance().on('mode-roaming', isOpen => {
+      if (isOpen) {
+        window.addEventListener('mousedown', this.mousedownFn)
+        window.addEventListener('mousemove', this.mousemoveFn)
+        window.addEventListener('mouseup', this.mouseupFn)
+      } else {
+        window.removeEventListener('mousedown', this.mousedownFn)
+        window.removeEventListener('mousemove', this.mousemoveFn)
+        window.removeEventListener('mouseup', this.mouseupFn)
+      }
+    })
+  }
+  // 鼠标按下
+  mousedownFn = () => {
+    this.isMouseTouching = true // 鼠标已经按下
+  }
+  // 鼠标移动
+  mousemoveFn = (e) => {
+    if (this.isMouseTouching) { // 只有按下时进入此逻辑代码
+      // 旋转核心思想：在原有的旋转角度基础上，新增移动的偏移量，乘以 0.01 让旋转弧度降低
+      // rotateY() 在上一次旋转的角度上继续新增你传入的弧度数值
+      // rotation.y = 直接赋予一个旋转的最终弧度数值_____正常来说    向左看右边  目前鼠标向左看左边
+      this.camera.rotateY((this.prePos - e.clientX) * 0.01)
+    }
+
+    this.prePos = e.clientX
+  }
+  // 鼠标抬起
+  mouseupFn = () => {
+    this.isMouseTouching = false
+    this.prePos = undefined // 清空上一次记录的坐标点位置
+  }
 }
