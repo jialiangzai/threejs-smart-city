@@ -89,6 +89,11 @@ window.addEventListener('DOMContentLoaded', function () {
         ship.model.rotation.set(0, -Math.PI / 2, 0)
         ship.model.scale.set(100, 100, 100)
         EffectManager.getInstance().addObj(ship)
+        // 订阅改变摄像机跟随游船移动的事件
+        EventBus.getInstance().on('mode-roaming', isOpen => {
+          ship.control.enabled = !isOpen // 关闭/开启轨道控制器
+          ship.isMoveCamera = isOpen // 摄像机跟随移动
+        })
       }
     })
     flyMode()
@@ -99,8 +104,8 @@ window.addEventListener('DOMContentLoaded', function () {
 })
 function flyMode () {
   // 飞行器注册
-  const geometryBox = new THREE.BoxGeometry(5, 5, 5)
-  const materialBox = new THREE.MeshBasicMaterial({ color: new THREE.Color('#0d1c31') })
+  const geometryBox = new THREE.BoxGeometry(1, 1, 1)
+  const materialBox = new THREE.MeshBasicMaterial({ color: new THREE.Color('#0d1c31'), visible: false })
   const cube = new THREE.Mesh(geometryBox, materialBox)
   scene.add(cube)
   let flyMode = new Fly(cube, scene, camera, control)

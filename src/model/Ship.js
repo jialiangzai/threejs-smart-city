@@ -8,7 +8,7 @@ export class Ship extends BaseModel {
 
     this.generatorMovePath() // 生成游船移动的路径
 
-    // this.isMoveCamera = false // 开关属性（控制摄像机是否跟随游船移动）
+    this.isMoveCamera = false // 开关属性（控制摄像机是否跟随游船移动）
 
     // this.onModelAttach() // 鼠标事件
     this.scene.add(this.model)
@@ -17,6 +17,10 @@ export class Ship extends BaseModel {
   onTick () {
     if (this.pointIndex < this.pointArr.length - 1) {
       const { x, y, z } = this.pointArr[this.pointIndex + 1]
+      if (this.isMoveCamera) {
+        this.camera.lookAt(x, y + 20, z)
+        this.camera.position.set(x, y + 20, z)
+      }
       // 游船移动：
       // 取出坐标设置给模型对象
       this.model.position.copy(this.pointArr[this.pointIndex])
