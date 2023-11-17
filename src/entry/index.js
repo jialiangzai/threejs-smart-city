@@ -7,7 +7,8 @@ import { Ship } from '@/model/Ship'
 import { Sky } from '@/environment/Sky.js'
 import { EffectManager } from '@/effect/EffectManager'
 import { ClickHandler } from '@/utils/ClickHandler'
-
+import { Fly } from '@/model/Fly.js'
+import { EventBus } from '@/utils/EventBus.js'
 let scene, camera, renderer, control, css2Renderer
 
 // 初始化 3d 基本环境
@@ -90,10 +91,24 @@ window.addEventListener('DOMContentLoaded', function () {
         EffectManager.getInstance().addObj(ship)
       }
     })
-
+    flyMode()
   })
   // 光线投射注册
   ClickHandler.getInstance().init(camera)
   renderLoop()
 })
-
+function flyMode () {
+  // 飞行器注册
+  const geometryBox = new THREE.BoxGeometry(5, 5, 5)
+  const materialBox = new THREE.MeshBasicMaterial({ color: new THREE.Color('#0d1c31') })
+  const cube = new THREE.Mesh(geometryBox, materialBox)
+  scene.add(cube)
+  let flyMode = new Fly(cube, scene, camera, control)
+  EffectManager.getInstance().addObj(flyMode)
+  EventBus.getInstance().on('mode-topView', (e) => {
+    // 控制摄像机是否跟随飞行器切换坐标点位置
+    flyMode.isCameraMove = e
+    // 优化轨道控制器
+    control.enabled = !e
+  })
+}
