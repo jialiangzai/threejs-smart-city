@@ -77,7 +77,7 @@ export class City extends BaseModel {
     new Fire(this.scene, center, size)
     let fireBil = new FireBall(this.scene, center)
     EffectManager.getInstance().addObj(fireBil)
-    this.initDesc(this.scene, center, byName)
+    // this.initDesc(this.scene, center, byName)
   }
   // 只有单独设置有名字的物体，才能被获取到并绑定事件
   initDesc (scene, center, byName) {
