@@ -41,7 +41,13 @@ export function loadManager (pathList, successFn) {
       }
     }
     )
-
+    // 对进度条再来做一个动画
+    // scaleX 范围是 0 - 1 做横向的缩放
+    gsap.fromTo('#loading-bar', {
+      scaleX: preValue / 100
+    }, {
+      scaleX: progressRatio / 100
+    })
   }
   // Load a glTF resource
   const loadModel = (path) => {
