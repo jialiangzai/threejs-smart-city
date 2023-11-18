@@ -10,6 +10,7 @@ import { ClickHandler } from '@/utils/ClickHandler'
 import { Fly } from '@/model/Fly.js'
 import { EventBus } from '@/utils/EventBus.js'
 import { DataManager } from '@/mock/DataManager.js'
+import { modifySelectCityMaterial } from '@/shader/modifyCityDefaultMaterial.js'
 let scene, camera, renderer, control, css2Renderer
 
 // 初始化 3d 基本环境
@@ -83,10 +84,32 @@ window.addEventListener('DOMContentLoaded', function () {
   loadManager(['fbx/city.fbx', 'gltf/ship.glb'], (modelList) => {
     modelList.forEach(async (m) => {
       if (m.url === 'fbx/city.fbx') {
-        let cityM = new City(m.model, scene, camera, control)
+        let city = new City(m.model, scene, camera, control)
         // 接口问题
         // let res = await DataManager.getInstance().getData()
         // cityM.buildNameObj = res
+        city.lastOriginMat = [] // 上一次高亮物体本来的材质
+        EventBus.getInstance().on('pieClick', buildName => {
+          // 如果有上一个物体，先把上一个物体的材质恢复一下
+          let index = 0
+          if (city.lastClick && city.lastOriginMat.length > 0) {
+            city.lastClick.traverse(model => {
+              model.material = city.lastOriginMat[index++]
+            })
+          }
+          // 设置当前点击的物体的高亮材质
+          const targetBuild = city.model.getObjectByName(buildName)
+          targetBuild.traverse(m => {
+            if (m.isMesh) {
+              city.lastOriginMat.push(model.material) // 保留小物体中每个细节物体的材质对象
+              model.material = new THREE.MeshBasicMaterial({
+                color: 0x0000ff
+              })
+              modifySelectCityMaterial(model) // 再给选中的小物体边线再设置上去
+            }
+          })
+          city.lastClick = targetBuild // 上一次点击的小物体对象
+        })
       } else if (m.url === 'gltf/ship.glb') {
         const ship = new Ship(m.model, scene, camera, control)
         ship.model.position.set(150, 0, -80)
