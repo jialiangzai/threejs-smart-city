@@ -2,6 +2,7 @@ import { DataManager } from '@/mock/DataManager.js'
 import * as THREE from 'three'
 import gsap from 'gsap'
 import * as echarts from 'echarts'
+import { EventBus } from '@/utils/EventBus.js'
 window.addEventListener('DOMContentLoaded', function () {
   // 创建柱状图
   const myBarChart = echarts.init(document.getElementById('bar-chart'))

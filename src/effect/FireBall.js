@@ -28,6 +28,11 @@ export class FireBall {
     this.nowMesh = sphere
     this.scene.add(sphere)
   }
+  clear() {
+    this.nowMesh.geometry.dispose()
+    this.nowMesh.material.dispose()
+    this.scene.remove(this.nowMesh)
+  }
   onTick (t) {
     // t的值：渲染循环启动过了多少毫秒时间
     if (this.nowScale < 1) {

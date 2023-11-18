@@ -19,4 +19,5 @@ export class Fire {
     sprite.scale.set(10, 10, 10)
     this.scene.add(sprite)
   }
+  clear () { this.scene.remove(this.model) }
 }

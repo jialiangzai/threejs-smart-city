@@ -10,7 +10,7 @@ import { FireBall } from "@/effect/FireBall"
 import { BuildInfo } from "@/dom/BuildInfo"
 import { EffectManager } from '@/effect/EffectManager.js'
 import { ClickHandler } from "@/utils/ClickHandler"
-
+import { EventBus } from '@/utils/EventBus.js'
 export class City extends BaseModel {
 
   // 子类无 constructor，默认走父类的，而且 this 为子类的实例对象
@@ -70,14 +70,26 @@ export class City extends BaseModel {
       }
     })
   }
-  // 火灾
-  initFire (byName) {
-    let build = this.model.getObjectByName(byName)
-    let { center, size } = getBoxCenter(build)
-    new Fire(this.scene, center, size)
-    let fireBil = new FireBall(this.scene, center)
-    EffectManager.getInstance().addObj(fireBil)
-    // this.initDesc(this.scene, center, byName)
+  // 创建火灾标记
+  // buildName 就是建模师模型中的小物体名字
+  initFire (buildName) {
+    const build = this.model.getObjectByName(buildName)
+    const { center, size } = getBoxCenter(build)
+
+    const fire = new Fire(this.scene, center, size)
+    const ball = new FireBall(this.scene, center)
+
+    // 注册动效管理
+    EffectManager.getInstance().addObj(ball)
+
+    // 过了 15 秒以后清除标记
+    setTimeout(() => {
+      fire.clear()
+      ball.clear()
+
+      // 移除动效
+      EffectManager.getInstance().removeObj(ball)
+    }, 15000)
   }
   // 只有单独设置有名字的物体，才能被获取到并绑定事件
   initDesc (scene, center, byName) {
